@@ -2,6 +2,9 @@ version: '3.8'
 
 services:
 
+  redis:
+    image: redis:7.0.11-alpine
+
   django:
     container_name: django
     build:
@@ -16,4 +19,20 @@ services:
       - SECRET_KEY=zxzxw2sdsdaas219fj01j9f
       - ALLOWED_HOSTS=localhost,127.0.0.1
 
-    
+    depends_on:
+      - redis
+
+  celery:
+    container_name: celery
+    build:
+      context: ./djcelery
+    command: celery --app=djcelery worker -l INFO
+    volumes:
+      - ./djcelery:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=zxzxw2sdsdaas219fj01j9f
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+
+    depends_on:
+      - redis
