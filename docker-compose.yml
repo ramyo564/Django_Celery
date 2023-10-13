@@ -22,8 +22,8 @@ services:
     depends_on:
       - redis
 
-  celery:
-    container_name: celery
+  celery1:
+    container_name: celery1
     build:
       context: ./djcelery
     command: celery --app=djcelery worker -l INFO
@@ -33,6 +33,18 @@ services:
       - DEBUG=1
       - SECRET_KEY=zxzxw2sdsdaas219fj01j9f
       - ALLOWED_HOSTS=localhost,127.0.0.1
-
     depends_on:
       - redis
+      - django
+
+  celery2:
+    container_name: celery2
+    build:
+      context: ./celeryworker
+      dockerfile: Dockerfile
+    command: celery -A celerytask worker -l INFO
+    volumes:
+      - ./celeryworker:/usr/src/app/
+    depends_on:
+      - redis
+      - django
