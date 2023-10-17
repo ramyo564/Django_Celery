@@ -19,7 +19,8 @@ task_chain.apply_async()
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -aq)
 
 
-from dcelery.celery import t1,t2,t3
+python manage.py shell
+from djcelery.celery import t1,t2,t3
 t2.apply_async(priority=5)
 t1.apply_async(priority=6)
 t3.apply_async(priority=9)
@@ -27,6 +28,10 @@ t2.apply_async(priority=5)
 t1.apply_async(priority=6)
 t3.apply_async(priority=9)
 
+
+t1.apply_async(args=[5,10], kwargs={"message":"The sum is"})
 # Run on Django to inspect task
 celery inspect active
 celery inspect active_queues
+
+
